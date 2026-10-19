@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro do Utilizador</title>
+</head>
+<body>
+    <h1>Cadastro do utilizador</h1>
+    
+    <input type="text" id="nome" placeholder="Digite seu nome"> <br><br>
+    <input type="number" id="idade" placeholder="Digite sua idade"> <br><br>
+    <input type="password" id="password" placeholder="Digite a password"> <br><br>
+    
+    <button onclick="guardarUsuario()">Guardar</button>
+    <button onclick="mostrarUsuario()">Mostrar</button>
+    <button onclick="apagarUsuario()">Apagar</button>
+    
+    <p id="resultado"></p>
+
+    <script>
+        function guardarUsuario() {
+            let nome = document.getElementById("nome").value;
+            let idade = document.getElementById("idade").value;
+            let password = document.getElementById("password").value;
+            
+            sessionStorage.setItem("nome", nome);
+            sessionStorage.setItem("idade", idade);
+    
+            sessionStorage.setItem("password", password); 
+            
+            alert("Dados guardados com sucesso");
+        }
+
+        function mostrarUsuario() {
+            let nome = sessionStorage.getItem("nome");
+            let idade = sessionStorage.getItem("idade"); 
+            let password = sessionStorage.getItem("password"); 
+            document.getElementById("resultado").innerHTML = 
+                "Nome: " + nome + "<br>" + 
+                "Idade: " + idade + "<br>" + 
+                "Password: " + password;
+        }
+
+        
+        function apagarUsuario() {
+            sessionStorage.removeItem("nome");
+            sessionStorage.removeItem("idade");
+            sessionStorage.removeItem("password");
+            
+            document.getElementById("resultado").innerHTML = "Dados apagados!";
+        }
+    </script>
+</body>
+</html>

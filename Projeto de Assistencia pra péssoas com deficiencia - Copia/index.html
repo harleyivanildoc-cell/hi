@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistente - Espaço Acessível</title>
+    <link rel="stylesheet" href="primeiro.css">
+    
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
+</head>
+<body>
+
+   
+    <a href="#conteudo-principal" class="sr-only" accesskey="s">Saltar para o conteúdo principal</a>
+
+    <div class="app-container">
+        
+        <aside role="complementary">
+            <div class="logo-container">
+                <img src="logo principal.png" alt="Logótipo Oficial do Assistente" class="logo-site">
+            </div>
+            <nav aria-label="Menu Principal">
+                <ul>
+                    <li><img src="icone casa.jpg" alt=""> Início</li>
+                    <li>
+                        <a href="informacoes.html">
+                            <img src="icone_de_informacoes-removebg-preview.png" alt=""> Informações e Direitos
+                        </a>
+                    </li>
+                    <li>
+                        <button id="btn-painel-acessibilidade" style="background:none; border:none; padding:0; font:inherit; cursor:pointer; text-align:left; width:100%; display:flex; align-items:center; gap:12px; color:inherit;">
+                            <img src="icone_de_acessibilidade-removebg-preview.png" alt=""> Painel Acessibilidade
+                        </button>
+                    </li>
+                    <li>
+                        <a href="serviços e apoio.html">
+                            <img src="icone_de_servicos-removebg-preview.png" alt=""> Serviços e Apoio
+                        </a>
+                    </li>
+                    <li><img src="icone_de_recursos-removebg-preview.png" alt=""> Recursos</li>
+                    <li><img src="icone de falar cimm assistente.png" alt=""> Falar com Assistente</li>
+                    <li><img src="icone_configuracao-removebg-preview.png" alt=""> Configurações</li>
+                    <li>
+                        <a href="sobre-nos.html">
+                            <img src="icone_de_sobre_nos-removebg-preview.png" alt=""> Sobre nós
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main id="conteudo-principal">
+            <header role="banner">
+                <div class="tagline">Inclusão • Acessibilidade • Respeito</div>
+                
+                <div class="controles-acessibilidade">
+                    <button id="btn-aumentar" aria-label="Aumentar o tamanho do texto">A+</button>
+                    <button id="btn-diminuir" aria-label="Diminuir o tamanho do texto">A-</button>
+                    <button id="btn-alto-contraste" aria-label="Alternar modo de alto contraste">Alto Contraste</button>
+                </div>
+                
+                <div class="botoes-sessao">
+                    <a href="Inicio-de-sessao.html" class="btn-link btn-login">Início de Sessão</a>
+                    <a href="cadastro-formulario.html" class="btn-link btn-cadastro">Cadastro</a>
+                </div>
+            </header>
+
+            <section class="painel-ia" aria-labelledby="titulo-ia">
+                <div class="ia-info">
+                    <h2 id="titulo-ia">Assistente de Visão Urbana</h2>
+                    <p>Este painel utiliza a câmara traseira do telemóvel para detetar obstáculos na rua em tempo real (como carros, peões e sinais) emitindo avisos sonoros instantâneos.</p>
+                    <button id="btn-camera" class="btn-cadastro">Ativar Modo de Rua</button>
+                    
+    
+                    <div id="status-ia" role="status" aria-live="polite" class="status-badge-ia">
+                        Sistema Desativado. Clique no botão acima para iniciar na rua.
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <video id="webcam" autoplay muted playsinline></video>
+                    <canvas id="canvas-overlay"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+const elementoBody = document.body;
+let tamanhoFonteAtual = 100;
+
+document.getElementById('btn-aumentar').addEventListener('click', () => {
+    if (tamanhoFonteAtual < 150) { tamanhoFonteAtual += 10; elementoBody.style.fontSize = tamanhoFonteAtual + '%'; }
+});
+document.getElementById('btn-diminuir').addEventListener('click', () => {
+    if (tamanhoFonteAtual > 80) { tamanhoFonteAtual -= 10; elementoBody.style.fontSize = tamanhoFonteAtual + '%'; }
+});
+
+const btnAltoContraste = document.getElementById('btn-alto-contraste');
+if (localStorage.getItem('altoContraste') === 'ativado') { elementoBody.classList.add('alto-contraste'); }
+btnAltoContraste.addEventListener('click', () => {
+    elementoBody.classList.toggle('alto-contraste');
+    localStorage.setItem('altoContraste', elementoBody.classList.contains('alto-contraste') ? 'ativado' : 'desactivado');
+});
+document.getElementById('btn-painel-acessibilidade').addEventListener('click', () => { btnAltoContraste.focus(); });
+
+const video = document.getElementById('webcam');
+const canvas = document.getElementById('canvas-overlay');
+const ctx = canvas.getContext('2d');
+const btnCamera = document.getElementById('btn-camera');
+const statusIa = document.getElementById('status-ia');
+
+let modeloIA = null;
+let ultimoObjetoFalado = "";
+let tempoUltimaFala = 0;
+
+
+const traducoesRua = {
+    "person": "Pessoa à frente",
+    "car": "Carro em aproximação",
+    "bus": "Autocarro",
+    "truck": "Camião",
+    "motorcycle": "Mota",
+    "bicycle": "Bicicleta",
+    "traffic light": "Semáforo",
+    "stop sign": "Sinal de Stop",
+    "fire hydrant": "Marco de água no passeio",
+    "bench": "Banco de rua à frente",
+    "dog": "Animal de estimação",
+    "cat": "Gato",
+    "backpack": "Obstáculo pedestre",
+    "handbag": "Mala",
+    "umbrella": "Guarda-chuva aberto"
+};
+function falar(texto) {
+    const agora = Date.now();
+    
+    if (texto === ultimoObjetoFalado && (agora - tempoUltimaFala) < 2500) return;
+
+    window.speechSynthesis.cancel(); 
+    const enunciado = new SpeechSynthesisUtterance(texto);
+    enunciado.lang = 'pt-PT'; 
+    enunciado.rate = 1.2;     // Velocidade ligeiramente acelerada para segurança na rua
+    window.speechSynthesis.speak(enunciado);
+    
+    ultimoObjetoFalado = texto;
+    tempoUltimaFala = agora;
+}
+
+btnCamera.addEventListener('click', async () => {
+    statusIa.textContent = "A carregar Assistente de Rua... Aguarde.";
+    falar("A carregar assistente de rua. Por favor, aguarde.");
+    
+    try {
+        modeloIA = await cocoSsd.load();
+        statusIa.textContent = "IA Ativa! A ligar câmara traseira...";
+        
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+                facingMode: "environment",
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+            } 
+        });
+        video.srcObject = stream;
+        
+        video.addEventListener('loadedmetadata', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            statusIa.textContent = "Modo de Rua Ativo! Segure o telemóvel à frente.";
+            falar("Modo de rua ativo. Pode caminhar com o telemóvel à frente.");
+            detectarObjetosUrbano();
+        });
+        
+        btnCamera.style.display = "none"; 
+    } catch (erro) {
+        statusIa.textContent = "Erro de câmara. Dê permissão nas configurações do navegador.";
+        falar("Erro ao ativar a câmara. Por favor, dê permissão.");
+        console.error(erro);
+    }
+});
+
+async function detectarObjetosUrbano() {
+    if (!modeloIA) return;
+
+    const predicoes = await modeloIA.detect(video);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    predicoes.forEach(predicao => {
+        if (predicao.score > 0.55) {
+            const nomeIngles = predicao.class;
+            
+            if (traducoesRua[nomeIngles]) {
+                const nomePt = traducoesRua[nomeIngles];
+                
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 5;
+                ctx.strokeRect(predicao.bbox[0], predicao.bbox[1], predicao.bbox[2], predicao.bbox[3]);
+                
+                ctx.fillStyle = '#ef4444';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.fillText(nomePt, predicao.bbox[0], predicao.bbox[1] > 20 ? predicao.bbox[1] - 8 : 20);
+                
+                statusIa.textContent = `Alerta: ${nomePt}`;
+                falar(nomePt);
+            }
+        }
+    });
+
+    requestAnimationFrame(detectarObjetosUrbano);
+}
+
+    </script>
+</body>
+</html>
