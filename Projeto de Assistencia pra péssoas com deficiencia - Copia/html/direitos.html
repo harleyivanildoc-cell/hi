@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Documento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .botoes {
+            margin-bottom: 15px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-right: 10px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-download {
+            background-color: #28a745;
+        }
+        .btn-download:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Boletim da República</h1>
+
+    <div class="botoes">
+        <a href="direitos das pessoas com defciencia.pdf" target="_blank" class="btn">Abrir em Nova Aba</a>
+        <a href="direitos das pessoas com defciencia.pdf" download class="btn btn-download">Baixar PDF</a>
+    </div>
+
+    <object data="documento.pdf" type="application/pdf" width="100%" height="800px">
+        <p>O seu navegador não suporta a visualização direta. Utilize os botões acima para abrir ou baixar.</p>
+    </object>
+</div>
+
+</body>
+</html>

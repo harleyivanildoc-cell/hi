@@ -1,0 +1,131 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: whitesmoke;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  gap: 32px;
+  position: relative;
+}
+
+.marca-pagina { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; 
+}
+
+.logo-img {
+  max-height: 110px;
+  max-width: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-texto {
+  font-size: 36px;
+  font-weight: bold;
+  color: blue;
+  letter-spacing: 1.5px;
+}
+
+.cadastro-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 550px;
+}
+
+.cadastro-container h2 {
+  color: blue;
+  margin-bottom: 8px;
+  font-size: 26px;
+}
+
+.cadastro-container p {
+  color: blue;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.cadastro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.input-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-linha {
+  display: flex;
+  gap: 15px;
+}
+
+.input-linha .input-grupo {
+  flex: 1;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  color: blue;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="password"],
+select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dcdde1;
+  border-radius: 6px;
+  font-size: 15px;
+  color: blue;
+  background-color: #f9f9f9;
+  transition: all 0.3s ease;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: #3498db;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+.btn-cadastrar {
+  background-color: blue;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-cadastrar:hover {
+  background-color: #0f0d7f;
+}
+
+@media (max-width: 480px) {
+  .input-linha {
+    flex-direction: column;
+    gap: 18px;
+  }
+}
